@@ -1,38 +1,23 @@
 ---
-import "./src/styles/global.css";
+import Layout from '../layouts/BaseLayout.astro';
+import Navbar from '../components/Navbar.astro';
+import "../styles/global.css";
 ---
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width" />
-    <meta name="generator" content={Astro.generator} />
-    <title>buzz</title>
-  </head>
-  <body class="bg-white text-gray-800">
-    <!-- Navbar -->
-    <header class="py-4">
-      <nav class="flex flex-col items-center space-y-2 sm:flex-row sm:justify-between sm:space-y-0 max-w-4xl mx-auto px-4">
-        <h1 class="text-2xl font-semibold">brown</h1>
-        <ul class="flex gap-4 text-base font-medium">
-          <li><a href="#craft" class="hover:underline">Craft</a></li>
-          <li><a href="#blog" class="hover:underline">Blog</a></li>
-          <li><a href="#feed" class="hover:underline">Feed</a></li>
-        </ul>
-      </nav>
-    </header>
-    <hr class="max-w-4xl mx-auto px-4">
+<Layout title="ali">
+  <header class="py-4">
+    <Navbar />
+  </header>
+  <!-- <hr class="max-w-4xl mx-auto px-4"> -->
 
-    <!-- Hero Section -->
-    <main class="py-10 px-4 max-w-3xl mx-auto space-y-6">
-      <img src="/public/profile.jpg" alt="Mario" class="w-24 h-24 rounded-full object-cover" />
-      <p class="text-lg leading-relaxed">
-        i'm ali and i am really a dumb guy, and i mean it. i am interested in all sorts of
-        things, from low-level stuff to design. i really like the intersection of
-        math, computation, and compilers, and i want to make a living out of it. other than
-        that i love playing games like terraria and turing complete.
-      </p>
-    </main>
-  </body>
-</html>
+  <main class="py-10 px-4 max-w-3xl mx-auto space-y-6">
+    <img src="/public/pp.jpg" alt="Mario" class="w-24 h-24 rounded-full object-cover" />
+    <p class="text-lg leading-relaxed">
+      i'm ali and i am really a dumb guy, and i mean it. i am interested in all sorts of
+      things, from low-level stuff to design. i really like the intersection of
+      math, computation, and compilers, and i want to make a living out of it. other than
+      that i love playing games like terraria and turing complete.
+    </p>
+    <button><a href="https://nekoweb.org/"><img src="https://nekoweb.org/assets/buttons/button3.gif"></a></button>
+  </main>
+</Layout>
