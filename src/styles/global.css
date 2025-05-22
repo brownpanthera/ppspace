@@ -1,0 +1,20 @@
+@import "tailwindcss";
+
+@font-face {
+    font-family: 'zed-mono-regular';
+    src: url('/public/fonts/zed-mono-regular.ttf');
+}
+
+@font-face {
+    font-family: 'zed-mono-thin';
+    src: url('/public/fonts/zed-mono-thin.ttf');
+}
+
+@font-face {
+    font-family: 'zed-mono-extended';
+    src: url('/public/fonts/zed-mono-extended.ttf');
+}
+
+body{
+    font-family: 'zed-mono-extended'
+}
