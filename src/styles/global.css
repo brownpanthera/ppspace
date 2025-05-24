@@ -16,5 +16,7 @@
 }
 
 body{
-    font-family: 'zed-mono-extended'
+    font-family: 'zed-mono-extended';
+    background-color: #1e1e2e;
+    color: #ffff;
 }
