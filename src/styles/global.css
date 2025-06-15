@@ -1,22 +1,87 @@
 @import "tailwindcss";
 
 @font-face {
-    font-family: 'zed-mono-regular';
-    src: url('/public/fonts/zed-mono-regular.ttf');
+    font-family: 'PressStart2P';
+    src: url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 }
 
-@font-face {
-    font-family: 'zed-mono-thin';
-    src: url('/public/fonts/zed-mono-thin.ttf');
+:root {
+    --color-primary: #4a3c2a;
+    --color-secondary: #2c2416;
+    --color-accent: #8b7355;
+    --color-text: #e6d5c3;
+    --color-background: #1a1a1a;
+    --color-border: #5d4c3c;
 }
 
-@font-face {
-    font-family: 'zed-mono-extended';
-    src: url('/public/fonts/zed-mono-extended.ttf');
+body {
+    font-family: 'PressStart2P', monospace;
+    background-color: var(--color-background);
+    color: var(--color-text);
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%232c2416' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    line-height: 1.6;
 }
 
-body{
-    font-family: 'zed-mono-extended';
-    background-color: #1e1e2e;
-    color: #ffff;
+/* Game-like UI elements */
+button, .button {
+    background-color: var(--color-primary);
+    border: 2px solid var(--color-border);
+    color: var(--color-text);
+    padding: 0.5rem 1rem;
+    font-family: 'PressStart2P', monospace;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 2px 2px 0 var(--color-secondary);
+}
+
+button:hover, .button:hover {
+    background-color: var(--color-accent);
+    transform: translateY(-2px);
+}
+
+/* Card-like elements */
+.card {
+    background-color: var(--color-secondary);
+    border: 2px solid var(--color-border);
+    padding: 1rem;
+    box-shadow: 4px 4px 0 var(--color-primary);
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--color-text);
+    text-shadow: 2px 2px 0 var(--color-primary);
+    letter-spacing: 1px;
+}
+
+/* Links */
+a {
+    color: var(--color-accent);
+    text-decoration: none;
+    border-bottom: 1px solid var(--color-accent);
+    transition: all 0.2s;
+}
+
+a:hover {
+    color: var(--color-text);
+    border-bottom-color: var(--color-text);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+    width: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--color-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--color-primary);
+    border: 2px solid var(--color-border);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--color-accent);
 }
