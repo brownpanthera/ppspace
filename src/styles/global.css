@@ -23,7 +23,7 @@ body {
 }
 
 /* Game-like UI elements */
-button, .button {
+/* button, .button {
     background-color: var(--color-primary);
     border: 2px solid var(--color-border);
     color: var(--color-text);
@@ -38,7 +38,7 @@ button, .button {
 button:hover, .button:hover {
     background-color: var(--color-accent);
     transform: translateY(-2px);
-}
+} */
 
 /* Card-like elements */
 .card {

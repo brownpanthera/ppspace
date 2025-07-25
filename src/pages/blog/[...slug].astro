@@ -1,0 +1,28 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import Layout from '../../layouts/BaseLayout.astro';
+import Navbar from '../../components/Navbar.astro';
+import "../../styles/global.css";
+
+export async function getStaticPaths() {
+  const blogEntries = await getCollection('blog');
+  return blogEntries.map((entry: CollectionEntry<'blog'>) => ({
+    params: { slug: entry.slug }, props: { entry },
+  }));
+}
+
+const { entry }: { entry: CollectionEntry<'blog'> } = Astro.props;
+const { Content } = await entry.render();
+---
+
+<Layout title={entry.data.title}>
+  <header class="py-4">
+    <Navbar />
+  </header>
+  <main class="py-10 px-4 max-w-3xl mx-auto space-y-6">
+    <article class="prose prose-invert max-w-none">
+      <h1>{entry.data.title}</h1>
+      <Content />
+    </article>
+  </main>
+</Layout> 
