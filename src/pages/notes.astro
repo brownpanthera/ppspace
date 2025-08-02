@@ -1,29 +1,41 @@
 ---
 import Layout from '../layouts/BaseLayout.astro';
 import Navbar from '../components/Navbar.astro';
+import { getEntry } from 'astro:content';
 import "../styles/global.css";
+
+// addon content from the blog collection
+const addonEntry = await getEntry('blog', 'addons');
+if (!addonEntry) {
+  throw new Error('Addon content not found');
+}
+const { Content: AddonContent } = await addonEntry.render();
 ---
 
 <Layout title="Notes">
   <header class="py-4">
     <Navbar />
   </header>
-  <main class="py-10 px-4 max-w-3xl mx-auto space-y-6">
-   <div>
-    <p>terraria</p>
-    <img src="terraria.png" alt="terraria">
-    <br>
-    <br>
-    <br>
-    <br>
-    <p>xor gate</p>
-    <img src="xorGate.png" alt="xor gate">
-    <br>
-    <br>
-    <br>
-    <br>
-    <p>3X3 handwired macropad (not working T_T)</p>
-    <img src="roughPatch.jpeg" alt="a 3X3 macropad">
-   </div>
+  <main class="py-12 px-3 max-w-5xl mx-auto space-y-6">
+    <article class="prose prose-invert max-w-none mb-12">
+      <AddonContent />
+    </article>
+    
+    <div>
+      <p>terraria</p>
+      <img src="terraria.png" alt="terraria">
+      <br>
+      <br>
+      <br>
+      <br>
+      <p>xor gate</p>
+      <img src="xorGate.png" alt="xor gate">
+      <br>
+      <br>
+      <br>
+      <br>
+      <p>3X3 handwired macropad (not working T_T)</p>
+      <img src="roughPatch.jpeg" alt="a 3X3 macropad">
+    </div>
   </main>
 </Layout> 

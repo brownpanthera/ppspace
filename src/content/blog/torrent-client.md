@@ -1,5 +1,5 @@
 ---
 title: "into the swarm"
-description: "torrent client"
+description: "internal of bittorrent"
 ---
 
