@@ -11,22 +11,7 @@ description: "building Node.js addons using C++ from scratch, covering compilati
     word-wrap: break-word;
     white-space: pre-wrap;
   }
-  
-  code {
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-  }
-  
-  img {
-    max-width: 100% !important;
-    height: auto !important;
-  }
-  
-  p {
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-  }
-}
+
 </style>
 
 # node.js addons from first principle
@@ -49,10 +34,16 @@ If I try to compile this it will throw an error `node.h: no such file or directo
 
 
 So node.h is ofcourse not a standard C++ header, it is part of node.js c++ api which basically means the compiler does not know where to find node.js headers. Also you can see my code is using V8::Local and V8::Object which require v8 headers to be included, and the actual V8 and Node.js function implementations will need to be linked via node.lib.
+<br>
+<br>
 
 btw headers contain only declaration not implementation so when i include node.h header i can get things like, function signature, type definations (v8::Local, v8::Object), class declarations and so on. the problem is headers don't contain the actual executable code. 
+<br>
+<br>
 
 basically things are already compiled and running inside the node.js process, and my addon needs node.lib to know how to call that existing code at runtime.
+<br>
+<br>
 
 w/o node.lib linker can't find the actual implementation of the V8/node.js functions.
 <br>
@@ -193,7 +184,7 @@ So i pull up the developer command prompt then from there i try to compile my co
 <br>
 
 
-<img src="/process.png" alt="Node.js addon compilation process diagram" style="max-width: 100%; height: auto;" />
+<img src="/process.png" class="max-w-full h-auto w-1/2 mx-auto" alt="Node.js addon compilation process diagram" style="max-width: 100%; height: auto;" />
 <br>
 <br>
 
