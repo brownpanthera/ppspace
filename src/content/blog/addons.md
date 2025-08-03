@@ -1,7 +1,7 @@
 ---
 title: "Building Node.js Addons from First Principle"
-pubDate: 03-08-2025
-description: "Building Node.js addons using C++ from scratch, covering compilation, linking, and ABI compatibility issues."
+pubDate: 2025-08-03
+description: "building Node.js addons using C++ from scratch, covering compilation, linking, and ABI compatibility issues."
 ---
 
 # node.js addons from first principle
