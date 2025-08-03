@@ -18,7 +18,7 @@ void Initialize(v8::Local <v8::Object> exports){
 NODE_MODULE(NODE_GYP_MODULE_NAME, Initialize)
 ```
 <br>
-If I compile this it will throw an error `node.h: no such file or directory exists`. Which is correct, so our goal is to let our compiler know where node.h is and to link this to our program somehow so that we can get our addon and run it from js environment.
+If I try to compile this it will throw an error `node.h: no such file or directory exists`. Which is correct, so our goal is to let our compiler know where node.h is and to link this to our program somehow so that we can get our addon and run it from js environment.
 <br>
 <br>
 
