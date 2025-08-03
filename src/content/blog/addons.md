@@ -4,6 +4,31 @@ pubDate: 2025-08-03
 description: "building Node.js addons using C++ from scratch, covering compilation, linking, and ABI compatibility issues."
 ---
 
+<style>
+@media (max-width: 768px) {
+  pre {
+    overflow-x: auto;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+  }
+  
+  code {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+  
+  img {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+  
+  p {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+}
+</style>
+
 # node.js addons from first principle
 <br>
 
@@ -137,7 +162,7 @@ So why can't different ABIs communicate with each other?
 **Stack alignment** - Compilers organize memory differently. One might align data on 4-byte boundaries while another uses 8-byte alignment causing crashes when they try to share data.
 <br>
 <br>
-core dumped video https://www.youtube.com/watch?v=XJC5WB2Bwrc&t
+core dumped [video](https://www.youtube.com/watch?v=XJC5WB2Bwrc&t)
 <br>
 <br>
 
@@ -173,7 +198,7 @@ So go to your developer command prompt then from there try to compile your code.
 <br>
 
 
-<img src="/process.png" alt="Node.js addon compilation process diagram" />
+<img src="/process.png" alt="Node.js addon compilation process diagram" style="max-width: 100%; height: auto;" />
 <br>
 <br>
 
