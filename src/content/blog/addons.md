@@ -18,12 +18,15 @@ void Initialize(v8::Local <v8::Object> exports){
 NODE_MODULE(NODE_GYP_MODULE_NAME, Initialize)
 ```
 <br>
-If I run this with g++ compiler with `g++ hello.cpp` it will throw an error `node.h: no such file or directory exists`. Which is correct, so our goal is to let our compiler know where the heck is node.h and to link this to our program somehow so that we can get our **addon** and can run from js environment.
+If I compile this it will throw an error `node.h: no such file or directory exists`. Which is correct, so our goal is to let our compiler know where node.h is and to link this to our program somehow so that we can get our addon and run it from js environment.
 <br>
 <br>
 
 
-So node.h is of course not a standard cpp header, it is part of nodejs c++ api which basically means the compiler does not know where to find node.js headers. Also you can see our code is using v8::Local and v8::Object which require v8 headers and I'm assuming this header will have to link.
+So node.h is of course not a standard cpp header, it is part of nodejs c++ api which basically means the compiler does not know where to find node.js headers. Also you can see our code is using v8::Local and v8::Object which require v8 headers to be included, and the actual v8 and Node.js function implementations will need to be linked via node.lib.
+
+btw headers contain only declaration not implementation so when we include node.h header we are getting only things like, function signature, type definations (v8::Local, v8::Object), class declarations and so on. the problem is headers don't contain the actual executable code
+so basically things are already compiled and running inside the node.js process, and our addon needs node.lib to know how to call that existing code at runtime. w/o node.lib linker can't find the actual implementation of the v8/node.js functions.
 <br>
 <br>
 
@@ -31,11 +34,10 @@ Node.js addons are shared libraries (.node files) that get loaded dynamically at
 <br>
 <br>
 
-The first step is locating Node.js headers. Here's the catch: Windows Node.js installations don't include headers by default! They only ship with runtime binaries (node.exe, npm). This is different from Linux where development headers are commonly included.
+The first step is locating Node.js headers. on Windows Node.js installations don't include headers by default, They only ship with runtime binaries (node.exe, npm). This is different from Linux where development headers are commonly included.
 <br>
 <br>
 
-**Where to get what you need:**
 If you already have Node.js installed, you have `node.exe`. You just need to download:
 <br>
 <br>
@@ -54,7 +56,7 @@ So you need 3 things: node.exe (runtime), node.lib (import library for linking) 
 <br>
 <br>
 
-Now if we try to compile it, here I'm going to use g++ compiler cause this only compiler I have. Let's take our code and convert it into shared obj or on windows it's called dynamic link library so we can use in another program.
+Now if we try to compile it, here I'm going to use GNU c++ compiler. Let's take our code and convert it into shared obj or on windows it's called dynamic link library so we can use in another program.
 <br>
 <br>
 
@@ -64,7 +66,7 @@ g++ -shared hello.cpp -o hello.node
 <br>
 <br>
 
-Here on Windows, shared objects are actually .dll files, and on Linux they are .so files. However, Node.js uses its own convention - Node.js addons use the .node extension on both platforms, even though they're technically DLLs on Windows and shared objects on Linux. So it doesn't matter what extension you use - Node.js will load both. I prefer .dll because it's more explicit about what we're actually building. Node.js uses .node for cross-platform consistency.
+here on Windows, shared objects are actually .dll files, and on linux they are .so files. however node.js uses its own convention .node extension on both platforms, even though they're technically DLLs on windows and shared objects on linux. the .node extension is required. Node.js specifically looks for this extension when loading native addons and won't recognize .dll files as addons.
 <br>
 <br>
 
@@ -74,7 +76,7 @@ g++ -shared hello.cpp -o hello.node -I"C:\Users\alifa\AppData\Local\node-gyp\Cac
 <br>
 <br>
 
-So now when I run it complains that it needs c++17 version but my compiler is on c++14 so you have two option update it or put the flag cpp17 and it will use cpp17 to compile your code. Basically node is using cpp17 features so our code can't compile.
+So now when I run it complains that it needs c++17 version but my compiler is on c++14 so you have two option update it or put the flag cpp17 and it will use cpp17 to compile your code. Basically node is using c++17 features so our code can't compile.
 <br>
 <br>
 
@@ -84,7 +86,7 @@ g++ -shared -std=c++17 hello.cpp -o hello.node -I"C:\Users\alifa\AppData\Local\n
 <br>
 <br>
 
-Now the linker complains that it can't find the V8 and Node.js API functions. The headers declare these functions, but the linker needs to know how to call them at runtime. That's where node.lib comes in - it's an import library that tells your addon how to access the V8 and Node.js functions that are already running in the Node.js process.
+Now the linker complains that it can't find the V8 and Node.js API functions. The headers declare these functions, but the linker needs to know how to call them at runtime. That's where node.lib comes in - it's an import library that tells our addon how to access the V8 and Node.js functions that are already running in the Node.js process.
 <br>
 <br>
 
@@ -96,16 +98,16 @@ g++ -shared -std=c++17 hello.cpp -o hello.node -I"C:\Users\alifa\AppData\Local\n
 <br>
 
 
-So far we're trying to build a DLL (or shared obj) that will let us run our addon from js. but keep in mind that node.js doesn't automatically recognize .dll files as native addons - it assumes they're JavaScript files Lol that's why we are giving .node extenstion instead dll. We added the C++17 flag, included the header path with -I, and linked the Node.js library with -L and -l
+So far we're trying to build a DLL (or shared obj) that will let us run our addon from js. We added the c++17 flag, included the header path with -I, and linked the Node.js library with -L flag
 <br>
 <br>
 
-Now I got an incompatibility error - I'm using MinGW compiler but Node.js is using MSVC. I couldn't understand the error, so I asked Claude. and i confirmed by doing simple os.type() and got 'Windows_NT' which confirms Node.js was compiled with MSVC and this right here create ABI mismatch or incompatibility. I have heard before ABI what it is but first time encountering incompatibility. Basically you have seen repos or codebase which have multiple languages used, so ABI defines the low-level interface between compiled code how functions are called, how data is structured, and how symbols are named. When different compilers use different ABIs (like MSVC vs MinGW), their compiled code can't interact properly, even if they're both compiling the same C++ source code.\
+Now I got an incompatibility error - I'm using MinGW compiler but Node.js is using MSVC. I couldn't understand the error, so I asked Claude. and i confirmed by doing simple os.type() and got 'Windows_NT' which confirms Node.js was compiled with MSVC and this right here create ABI mismatch or incompatibility. I have heard before ABI what it is but first time encountering incompatibility. Basically you have seen repos or codebase which have multiple languages used, so ABI defines the low-level interface between compiled code how functions are called, how data is structured, and how symbols are named. When different compilers use different ABIs (like MSVC vs MinGW), their compiled code can't interact properly, even if they're both compiling the same C++ source code.
 <br>
 <br>
 
 
-So basically nodejs built with msvc which is windows standard, and my addon is being built on mingw gcc port, and when we try to do linking it failed because convention differ. Different compilers have different ABIs, windows msvc is the native toolchain and cross compiling linking requires careful ABI matching. msvc expects .lib and mingw expects .a.
+so basically nodejs built with msvc which is windows standard, and my addon is being built on mingw gcc port, and when we try to do linking it failed because convention differ. Different compilers have different ABIs, windows msvc is the native toolchain and cross compiling linking requires careful ABI matching. msvc expects .lib and mingw expects .a.
 <br>
 <br>
 
@@ -155,7 +157,7 @@ cl /std:c++17 /I"C:\Users\alifa\AppData\Local\node-gyp\Cache\21.7.3\include\node
 <br>
 <br>
 
-When you download Visual Studio (or Build Tools), you get the complete Windows development toolchain - not just a compiler, but everything: cl.exe (compiler), link.exe (linker), Windows SDK headers, and developer command prompts with all environment variables set up. That's why it's called Microsoft C++ Build Tools - it's the entire Windows native development ecosystem!
+You can Download Visual Studio Build Tools to get the complete Windows development toolchain: cl.exe (compiler), link.exe (linker), Windows SDK headers, and pre-configured developer command prompts with environment variables.
 <br>
 <br>
 
