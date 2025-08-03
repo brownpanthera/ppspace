@@ -43,23 +43,22 @@ void Initialize(v8::Local <v8::Object> exports){
 NODE_MODULE(NODE_GYP_MODULE_NAME, Initialize)
 ```
 <br>
-If I try to compile this it will throw an error `node.h: no such file or directory exists`. Which is correct, so our goal is to let our compiler know where node.h is and to link this to our program somehow so that we can get our addon and run it from js environment.
+If I try to compile this it will throw an error `node.h: no such file or directory exists`. Which is correct, so my goal was to let compiler know where node.h is and to link this to my program, somehow so that i can get my addon and run it from js environment.
 <br>
 <br>
 
 
-So node.h is of course not a standard cpp header, it is part of nodejs c++ api which basically means the compiler does not know where to find node.js headers. Also you can see our code is using v8::Local and v8::Object which require v8 headers to be included, and the actual v8 and Node.js function implementations will need to be linked via node.lib.
+So node.h is ofcourse not a standard C++ header, it is part of node.js c++ api which basically means the compiler does not know where to find node.js headers. Also you can see my code is using V8::Local and V8::Object which require v8 headers to be included, and the actual V8 and Node.js function implementations will need to be linked via node.lib.
 
-btw headers contain only declaration not implementation so when we include node.h header we are getting only things like, function signature, type definations (v8::Local, v8::Object), class declarations and so on. the problem is headers don't contain the actual executable code
-so basically things are already compiled and running inside the node.js process, and our addon needs node.lib to know how to call that existing code at runtime. w/o node.lib linker can't find the actual implementation of the v8/node.js functions.
+btw headers contain only declaration not implementation so when i include node.h header i can get things like, function signature, type definations (v8::Local, v8::Object), class declarations and so on. the problem is headers don't contain the actual executable code. 
+
+basically things are already compiled and running inside the node.js process, and my addon needs node.lib to know how to call that existing code at runtime.
+
+w/o node.lib linker can't find the actual implementation of the V8/node.js functions.
 <br>
 <br>
 
-Node.js addons are shared libraries (.node files) that get loaded dynamically at runtime - they're not standalone executables. for addon development we need headers separately.
-<br>
-<br>
-
-The first step is locating Node.js headers. on Windows Node.js installations don't include headers by default, They only ship with runtime binaries (node.exe, npm). This is different from Linux where development headers are commonly included.
+The first step is locating Node.js headers. On Windows Node.js installations don't include headers by default, They only ship with runtime binaries (node.exe, npm). but on linux it ships with node headers.
 <br>
 <br>
 
@@ -73,15 +72,11 @@ If you already have Node.js installed, you have `node.exe`. You just need to dow
 <br>
 <br>
 
-In my case, I found them already cached from a previous project, i have used node-gyp before so i have already headers files and lib files.
+In my case I found them already cached from a previous project, i have used node-gyp before so i have already headers files and lib file. also linux does not need .lib which i don't yet. basically what i understand is here on linux node functions are already loaded in the process memory but still i don't how. so i won't cover this. 
 <br>
 <br>
 
-So you need 3 things: node.exe (runtime), node.lib (import library for linking) and the headers which have our node.h too. node.lib file will help us to link cpp code to js. Without this our addon won't know how to call nodejs internal functions at link time so the build will fail. Basically its job is to provide things when we build native cpp addons or we embed nodejs into another application.
-<br>
-<br>
-
-Now if we try to compile it, here I'm going to use GNU c++ compiler. Let's take our code and convert it into shared obj or on windows it's called dynamic link library so we can use in another program.
+anyways so you need 3 things: node.exe (runtime), node.lib (import library for linking) and the headers which have our node.h. node.lib file will help us to link c++ code to js. Without this our addon won't know how to call node internal functions at link time so the build will fail. Basically its job is to provide things when we build native cpp addons or we embed node.js into another application.
 <br>
 <br>
 
@@ -91,7 +86,7 @@ g++ -shared hello.cpp -o hello.node
 <br>
 <br>
 
-here on Windows, shared objects are actually .dll files, and on linux they are .so files. however node.js uses its own convention .node extension on both platforms, even though they're technically DLLs on windows and shared objects on linux. the .node extension is required. Node.js specifically looks for this extension when loading native addons and won't recognize .dll files as addons.
+Here on Windows shared objects are actually .dll (dynamic link libraries) and on linux they are .so files. however node.js uses its own convention .node extension on both platforms, even though they're technically DLLs on windows and shared objects on linux. the .node extension is required. Node.js specifically looks for this extension when loading native addons and won't recognize .dll or .so files as addons.
 <br>
 <br>
 
@@ -101,7 +96,7 @@ g++ -shared hello.cpp -o hello.node -I"C:\Users\alifa\AppData\Local\node-gyp\Cac
 <br>
 <br>
 
-So now when I run it complains that it needs c++17 version but my compiler is on c++14 so you have two option update it or put the flag cpp17 and it will use cpp17 to compile your code. Basically node is using c++17 features so our code can't compile.
+So after including the path of my headers, it complains that it needs C++17. My compiler defaults to C++14, so I had to add the C++17 flag. Node.js uses C++17 features that aren't available in C++14.
 <br>
 <br>
 
@@ -111,7 +106,7 @@ g++ -shared -std=c++17 hello.cpp -o hello.node -I"C:\Users\alifa\AppData\Local\n
 <br>
 <br>
 
-Now the linker complains that it can't find the V8 and Node.js API functions. The headers declare these functions, but the linker needs to know how to call them at runtime. That's where node.lib comes in - it's an import library that tells our addon how to access the V8 and Node.js functions that are already running in the Node.js process.
+Now the linker complains that it can't find the V8 and Node.js API functions. The headers declare these functions, but the linker needs to know how to call them at runtime. That's where node.lib comes in. it's an import library that tells our addon how to access the V8 and Node.js functions that are already running in the Node.js process. also i am assuming on linux this process won't be needed.
 <br>
 <br>
 
@@ -123,16 +118,16 @@ g++ -shared -std=c++17 hello.cpp -o hello.node -I"C:\Users\alifa\AppData\Local\n
 <br>
 
 
-So far we're trying to build a DLL (or shared obj) that will let us run our addon from js. We added the c++17 flag, included the header path with -I, and linked the Node.js library with -L flag
+So far i am trying to build a DLL (or shared obj) which is hello.node that will let us run our addon from js env. i added the C++17 flag, included the header path with -I, and linked the Node.js library with -l flag
 <br>
 <br>
 
-Now I got an incompatibility error - I'm using MinGW compiler but Node.js is using MSVC. I couldn't understand the error, so I asked Claude. and i confirmed by doing simple os.type() and got 'Windows_NT' which confirms Node.js was compiled with MSVC and this right here create ABI mismatch or incompatibility. I have heard before ABI what it is but first time encountering incompatibility. Basically you have seen repos or codebase which have multiple languages used, so ABI defines the low-level interface between compiled code how functions are called, how data is structured, and how symbols are named. When different compilers use different ABIs (like MSVC vs MinGW), their compiled code can't interact properly, even if they're both compiling the same C++ source code.
+Now I got an incompatibility error. as i am using GNU toolchain which is based on MinGW or ming32 but Node.js is using MSVC. I couldn't understand the error, so I asked Claude. and i confirmed by doing simple os.type() and got 'Windows_NT' which confirms Node.js was compiled with MSVC and this right here create ABI mismatch or incompatibility. I have heard before ABI what it is but first time encountering incompatibility. Basically you have seen repos or codebase which have multiple languages used, so ABI defines the low-level interface between compiled code how functions are called, how data is structured, and how symbols are named. When different compilers use different ABIs (like MSVC vs MinGW), their compiled code can't interact properly, even if they're both compiling the same C++ source code.
 <br>
 <br>
 
 
-so basically nodejs built with msvc which is windows standard, and my addon is being built on mingw gcc port, and when we try to do linking it failed because convention differ. Different compilers have different ABIs, windows msvc is the native toolchain and cross compiling linking requires careful ABI matching. msvc expects .lib and mingw expects .a.
+So basically Node.js built with MSVC which is Windows standard, and my addon is being built on mingw32 gcc port, and when i try to do linking it failed because convention differ. different compilers have different ABIs, windows MSVC is the native toolchain and cross compiling linking requires careful ABI matching. MSVC expects .lib and mingw expects .a.exe.
 <br>
 <br>
 
@@ -166,12 +161,12 @@ core dumped [video](https://www.youtube.com/watch?v=XJC5WB2Bwrc&t)
 <br>
 <br>
 
-So our linker can't match two different things, we have to come on same page. So I'm going to compile now with msvc as msvc is used by node, basically node compiled with msvc so it would be good if I go with msvc I think. Or you can just download the mingw compiled node version (which I didn't find) then you can have compatible ABI and it will not complain. node.lib was compiled with msvc and our code we compiling with mingw. .lib means it is from msvc toolchain if it was mingw tool chain then it will be .a. Just use the same toolchain. That's it.
+So our linker can't match two different things, we have to come on same page. So I'm going to compile now with MSVC as MSVC is used by node, basically node compiled with MSVC so it would be good if i go with MSVC I think. Or i can just download the mingw compiled node version (which I didn't find) then only i can have compatible ABI and it will not complain.
 <br>
 <br>
 
 
-So now I'm moving to msvc to compile my code.
+So now i moved to msvc to compile my code.
 <br>
 <br>
 
@@ -182,12 +177,12 @@ cl /std:c++17 /I"C:\Users\alifa\AppData\Local\node-gyp\Cache\21.7.3\include\node
 <br>
 <br>
 
-You can Download Visual Studio Build Tools to get the complete Windows development toolchain: cl.exe (compiler), link.exe (linker), Windows SDK headers, and pre-configured developer command prompts with environment variables.
+btw you can download Visual Studio to get the complete Windows development toolchain: cl.exe (compiler), link.exe (linker), Windows SDK headers, and pre-configured developer command prompts with environment variables.
 <br>
 <br>
 
 
-So go to your developer command prompt then from there try to compile your code. That shell is using msvc toolchain. But keep in mind what architecture of node you are using, cause in my case I'm using the x64 version of Node.js, basically my Node.js binary targets x64 architecture and if you try to link on some x86 32 bit arch then it will throw error `warning LNK4272: library machine type 'x64' conflicts with target machine type 'x86'`. you can know by doing process.arch on repl. if so then you have to compile your code on x64 native tools command prompt shell and that will do the job.
+So i pull up the developer command prompt then from there i try to compile my code. that shell is using msvc toolchain so i got no problem. but it complain about architecture of node, cause in my case i'm using the x64 version of Node.js and that shell was on x86. basically my Node.js binary targets x64 architecture and if you try to link on some x86 32 bit arch then it will throw error `warning LNK4272: library machine type 'x64' conflicts with target machine type 'x86'`. you can know youar arch by doing process.arch on repl. windows ships x64 version too. so i used that shell. Windows love backward compatibility btw. 
 <br>
 <br>
 
@@ -203,7 +198,7 @@ So go to your developer command prompt then from there try to compile your code.
 <br>
 
 
-So after successful compilation, it generates a few files:
+So after successful compilation it generates a few files:
 <br>
 <br>
 
