@@ -91,5 +91,46 @@ pre {
     line-height: 1.8 !important;
     border-radius: 8px !important;
     overflow-x: auto !important;
+}
 
+/* Buy Me a Coffee Button */
+.coffee-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    background-color: var(--color-primary);
+    border: 3px solid var(--color-border);
+    border-radius: 50%;
+    color: var(--color-text);
+    font-size: 2rem;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 4px 4px 0 var(--color-secondary);
+    position: relative;
+    overflow: hidden;
+}
+
+.coffee-button:hover {
+    background-color: var(--color-accent);
+    transform: translateY(-3px);
+    box-shadow: 6px 6px 0 var(--color-secondary);
+    border-color: var(--color-text);
+    animation: pulse 0.6s infinite alternate;
+}
+
+.coffee-button:active {
+    transform: translateY(-1px);
+    box-shadow: 2px 2px 0 var(--color-secondary);
+}
+
+@keyframes pulse {
+    0% { 
+        transform: translateY(-3px) scale(1); 
+    }
+    100% { 
+        transform: translateY(-3px) scale(1.05); 
+    }
 }
